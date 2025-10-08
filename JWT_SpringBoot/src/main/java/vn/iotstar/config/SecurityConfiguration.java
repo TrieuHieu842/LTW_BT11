@@ -31,22 +31,29 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/login**").permitAll().requestMatchers("/user/**").permitAll()
-						.requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
-						.requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll().anyRequest()
-						.authenticated())
-				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    http
+	        .csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/signin", "/auth/**", "/js/**", "/css/**", "/images/**").permitAll()
+	            .anyRequest().authenticated()
+	        )
+	        .formLogin(form -> form
+	            .loginPage("/signin") // chỉ định trang login
+	            .permitAll()
+	        )
+	        .authenticationProvider(authenticationProvider)
+	        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+	    return http.build();
 	}
+
+
+
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:8005"));
+		configuration.setAllowedOrigins(List.of("http://localhost:8081"));
 		configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));

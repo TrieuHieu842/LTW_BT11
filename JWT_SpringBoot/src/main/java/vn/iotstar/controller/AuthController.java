@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class AuthController {
-	
-	@GetMapping("login")
-	public String index() {
-		return "login";
-	}
+    
+    @GetMapping("signin")
+    public String signin() {
+        return "login"; // file login.html trong templates/
+    }
 
-	@GetMapping("user/profile")
-	public String profile() {
-		return "profile";
-	}
+    @GetMapping("user/profile")
+    public String profile() {
+        return "profile";
+    }
 }
